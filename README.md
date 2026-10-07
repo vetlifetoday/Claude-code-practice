@@ -3,7 +3,7 @@
 Contact management for VETLIFE, a veteran-focused 501(c)(3).
 Built with Next.js (App Router, TypeScript), Tailwind CSS, and Supabase (Postgres, Auth, Storage). Deploys to Vercel.
 
-> Setting this up for real? Step-by-step instructions for non-developers are in **docs/SETUP.md** (added in Phase 4).
+> Setting this up for real? Follow the step-by-step, no-coding guide in **[docs/SETUP.md](docs/SETUP.md)**.
 
 ## How it's organized
 
