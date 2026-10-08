@@ -147,14 +147,14 @@ isOneToOne: false
                   ]
                 },"contacts": {
                   Row: {
-                    "address": string | null,"archived_at": string | null,"archived_by": string | null,"city": string | null,"company": string | null,"created_at": string,"created_by": string | null,"display_name": string | null,"email": string | null,"first_name": string | null,"id": string,"kind": Database["public"]['Enums']["contact_kind"],"last_name": string | null,"notes": string | null,"organization_id": string | null,"phone": string | null,"photo_path": string | null,"search_text": string | null,"state": string | null,"title": string | null,"updated_at": string,"updated_by": string | null,"veteran_id": string | null,"years_of_service": number | null,"zip": string | null
+                    "address": string | null,"archived_at": string | null,"archived_by": string | null,"city": string | null,"company": string | null,"created_at": string,"created_by": string | null,"display_name": string | null,"email": string | null,"first_name": string | null,"id": string,"kind": Database["public"]['Enums']["contact_kind"],"last_name": string | null,"notes": string | null,"organization_id": string | null,"phone": string | null,"photo_path": string | null,"search_text": string | null,"sort_name": string | null,"state": string | null,"title": string | null,"updated_at": string,"updated_by": string | null,"veteran_id": string | null,"years_of_service": number | null,"zip": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"archived_at"?: string | null,"archived_by"?: string | null,"city"?: string | null,"company"?: string | null,"created_at"?: string,"created_by"?: string | null,"display_name"?: never,"email"?: string | null,"first_name"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["contact_kind"],"last_name"?: string | null,"notes"?: string | null,"organization_id"?: string | null,"phone"?: string | null,"photo_path"?: string | null,"search_text"?: never,"state"?: string | null,"title"?: string | null,"updated_at"?: string,"updated_by"?: string | null,"veteran_id"?: string | null,"years_of_service"?: number | null,"zip"?: string | null
+                    "address"?: string | null,"archived_at"?: string | null,"archived_by"?: string | null,"city"?: string | null,"company"?: string | null,"created_at"?: string,"created_by"?: string | null,"display_name"?: never,"email"?: string | null,"first_name"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["contact_kind"],"last_name"?: string | null,"notes"?: string | null,"organization_id"?: string | null,"phone"?: string | null,"photo_path"?: string | null,"search_text"?: never,"sort_name"?: never,"state"?: string | null,"title"?: string | null,"updated_at"?: string,"updated_by"?: string | null,"veteran_id"?: string | null,"years_of_service"?: number | null,"zip"?: string | null
                   }
                   Update: {
-                    "address"?: string | null,"archived_at"?: string | null,"archived_by"?: string | null,"city"?: string | null,"company"?: string | null,"created_at"?: string,"created_by"?: string | null,"display_name"?: never,"email"?: string | null,"first_name"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["contact_kind"],"last_name"?: string | null,"notes"?: string | null,"organization_id"?: string | null,"phone"?: string | null,"photo_path"?: string | null,"search_text"?: never,"state"?: string | null,"title"?: string | null,"updated_at"?: string,"updated_by"?: string | null,"veteran_id"?: string | null,"years_of_service"?: number | null,"zip"?: string | null
+                    "address"?: string | null,"archived_at"?: string | null,"archived_by"?: string | null,"city"?: string | null,"company"?: string | null,"created_at"?: string,"created_by"?: string | null,"display_name"?: never,"email"?: string | null,"first_name"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["contact_kind"],"last_name"?: string | null,"notes"?: string | null,"organization_id"?: string | null,"phone"?: string | null,"photo_path"?: string | null,"search_text"?: never,"sort_name"?: never,"state"?: string | null,"title"?: string | null,"updated_at"?: string,"updated_by"?: string | null,"veteran_id"?: string | null,"years_of_service"?: number | null,"zip"?: string | null
                   }
                   Relationships: [
                     {
@@ -332,6 +332,7 @@ isOneToOne: false
 "phone": string | null,
 "photo_path": string | null,
 "search_text": string | null,
+"sort_name": string | null,
 "state": string | null,
 "title": string | null,
 "updated_at": string,

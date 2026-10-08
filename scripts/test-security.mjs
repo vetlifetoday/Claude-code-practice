@@ -148,6 +148,26 @@ check(created?.created_by != null, "created_by is stamped");
   check(c3 === 0, "LIKE wildcards are escaped");
 }
 
+// timeline entries
+{
+  const { error: vErr } = await asViewer.from("interactions").insert({ contact_id: created.id, summary: "nope" });
+  check(!!vErr, "viewer cannot add timeline entries");
+  const { data: note, error: sErr } = await asStaff
+    .from("interactions")
+    .insert({ contact_id: created.id, summary: "Called about Vet Fest", type: "call" })
+    .select()
+    .single();
+  check(!sErr && note, "staff can add timeline entries");
+  const { error: arch } = await asStaff.rpc("set_archived", { p_entity: "interaction", p_id: note.id, p_archive: true });
+  check(!arch, "staff can delete (archive) timeline entries");
+  const { data: hidden } = await asStaff.from("interactions").select("id").eq("id", note.id);
+  check(hidden.length === 0, "deleted entries are hidden from staff");
+  const { error: rest } = await asStaff.rpc("set_archived", { p_entity: "interaction", p_id: note.id, p_archive: false });
+  check(!!rest, "staff cannot restore timeline entries");
+  const { error: rest2 } = await asAdmin.rpc("set_archived", { p_entity: "interaction", p_id: note.id, p_archive: false });
+  check(!rest2, "admin can restore timeline entries");
+}
+
 // storage
 {
   const path = `contacts/${created.id}/docs/${stamp}-test.pdf`;

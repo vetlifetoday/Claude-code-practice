@@ -6,7 +6,10 @@ import { requireSession } from "@/lib/auth";
 import { TAG_SELECT, type TagRow } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { Alert, Badge, Card, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { Avatar } from "@/components/avatar";
+import { signPhotoUrls } from "@/lib/signed-urls";
+import { PhotoUploader } from "./photo-uploader";
+import { Timeline, type TimelineEntry } from "./timeline";
+import { DocumentsPanel, type DocumentRow } from "./documents-panel";
 import { TagList } from "@/components/tag-list";
 import { ConfirmActionButton } from "@/components/confirm-action-button";
 import { archiveContact, restoreContact } from "../actions";
@@ -33,10 +36,47 @@ export default async function ContactPage({ params, searchParams }: PageProps<"/
     .maybeSingle();
   if (!c) notFound();
 
-  const [{ data: family }, { data: members }] = await Promise.all([
+  const [{ data: family }, { data: members }, { data: interactions }, { data: docs }, photos] = await Promise.all([
     supabase.from("contacts").select(`id, display_name, ${TAG_SELECT}`).eq("veteran_id", id).is("archived_at", null).order("display_name"),
     supabase.from("contacts").select("id, display_name, title").eq("organization_id", id).is("archived_at", null).order("display_name"),
+    supabase
+      .from("interactions")
+      .select(
+        "id, type, occurred_on, summary, created_at, updated_at, author:profiles!interactions_created_by_fkey(full_name, email), editor:profiles!interactions_updated_by_fkey(full_name, email)",
+      )
+      .eq("contact_id", id)
+      .is("archived_at", null)
+      .order("occurred_on", { ascending: false })
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("contact_documents")
+      .select("id, file_name, mime_type, size_bytes, created_at, uploader:profiles!contact_documents_created_by_fkey(full_name, email)")
+      .eq("contact_id", id)
+      .is("archived_at", null)
+      .order("created_at", { ascending: false }),
+    signPhotoUrls([c.photo_path]),
   ]);
+
+  const personName = (p: { full_name: string | null; email: string } | null) => (p ? p.full_name || p.email : null);
+  const timeline: TimelineEntry[] = (interactions ?? []).map((i) => ({
+    id: i.id,
+    type: i.type,
+    occurred_on: i.occurred_on,
+    summary: i.summary,
+    created_at: i.created_at,
+    updated_at: i.updated_at,
+    author: personName(i.author),
+    editor: personName(i.editor),
+  }));
+  const documents: DocumentRow[] = (docs ?? []).map((d) => ({
+    id: d.id,
+    file_name: d.file_name,
+    mime_type: d.mime_type,
+    size_bytes: d.size_bytes,
+    created_at: d.created_at,
+    uploader: personName(d.uploader),
+  }));
+  const canEditThis = session.canEdit && !c.archived_at;
 
   const archived = !!c.archived_at;
   const location = [c.city, [c.state, c.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
@@ -47,8 +87,15 @@ export default async function ContactPage({ params, searchParams }: PageProps<"/
       <PageHeader
         back={{ href: "/contacts", label: "Contacts" }}
         title={
-          <span className="flex items-center gap-3">
-            <Avatar name={c.display_name ?? ""} kind={c.kind} size="md" />
+          <span className="flex items-center gap-4">
+            <PhotoUploader
+              contactId={id}
+              name={c.display_name ?? ""}
+              kind={c.kind}
+              src={c.photo_path ? (photos.get(c.photo_path) ?? null) : null}
+              hasPhoto={!!c.photo_path}
+              canEdit={canEditThis}
+            />
             <span className="min-w-0">
               <span className="block truncate">{c.display_name}</span>
               {c.kind === "person" && (c.title || c.company) && (
@@ -136,6 +183,11 @@ export default async function ContactPage({ params, searchParams }: PageProps<"/
               </Item>
             </dl>
           </Card>
+
+          <Card>
+            <CardHeader title="Timeline" description="Dated notes, calls, meetings, and events." />
+            <Timeline contactId={id} entries={timeline} canEdit={canEditThis} />
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -189,6 +241,11 @@ export default async function ContactPage({ params, searchParams }: PageProps<"/
               </ul>
             </Card>
           )}
+
+          <Card>
+            <CardHeader title="Documents" />
+            <DocumentsPanel contactId={id} documents={documents} canEdit={canEditThis} />
+          </Card>
 
           <Card>
             <CardHeader title="Record" />

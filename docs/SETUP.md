@@ -38,17 +38,27 @@ You need:
 
 You'll copy two files from GitHub and paste them into Supabase. You don't need to understand them.
 
-**File 1 — the database structure and security rules (required):**
+**Step A — the database structure and security rules (required):**
 
-1. In a new browser tab, open GitHub and go to the repository → folder **`supabase/migrations`** → open the file
-   **`20261007000001_core_schema.sql`**.
+The folder **`supabase/migrations`** on GitHub holds several `.sql` files. Run **each one, in order**
+(their names start with a date, so the list is already in order):
+
+| Order | File |
+| --- | --- |
+| 1 | `20261007000001_core_schema.sql` |
+| 2 | `20261008000001_phase2_sorting.sql` |
+
+For each file:
+
+1. In a new browser tab, open GitHub and go to the repository → folder **`supabase/migrations`** → open the file.
 2. Click the **Copy raw file** button (two overlapping squares, top-right of the file).
 3. Back in Supabase, click **SQL Editor** in the left menu, then **+ New query** (or a blank query tab).
 4. Paste (Ctrl+V / Cmd+V) and click **Run**.
 5. You should see **"Success. No rows returned."**
    - If Supabase shows a warning about "destructive operations", that's expected — click **Run this query**.
+6. Move on to the next file. **Run each file only once.**
 
-**File 2 — the 10 sample contacts (optional, recommended for testing):**
+**Step B — the 10 sample contacts (optional, recommended for testing):**
 
 1. In GitHub, open **`supabase/seed.sql`** and click **Copy raw file**.
 2. In the SQL Editor, open a **new** query tab, paste, and click **Run**.
@@ -196,6 +206,22 @@ stays in the audit trail.
 
 ---
 
+## Installing updates later
+
+When Claude adds features, two things can happen:
+
+- **Website code changes** are picked up automatically: Vercel redeploys within a few minutes of each update on GitHub.
+- **Database changes** arrive as a **new file** in `supabase/migrations`. Claude will tell you the file name.
+  Run **only the new file** in the Supabase SQL Editor (same steps as Part 1.2), ideally right after the
+  update lands. Never re-run a file you've already run.
+
+| File | Added in | What it does |
+| --- | --- | --- |
+| `20261007000001_core_schema.sql` | Phase 1 | Tables, security rules, default categories |
+| `20261008000001_phase2_sorting.sql` | Phase 2 | Better sorting of the contact list by name |
+
+---
+
 ## Troubleshooting
 
 | Problem | Fix |
@@ -206,6 +232,7 @@ stays in the audit trail.
 | Invite email never arrives | See the **built-in email** warning above. Check spam too. |
 | Users page says it "could not load sign-in details" | The `SUPABASE_SECRET_KEY` in Vercel is missing or wrong. Fix it and **Redeploy**. |
 | Signed in but see "You don't have access to that page" | Your role doesn't allow that page. An Admin can change it under **Admin → Users**. |
+| Contact list shows "column contacts.sort_name does not exist" | The Phase 2 database file hasn't been run yet. Run `20261008000001_phase2_sorting.sql` (see **Installing updates later**). |
 | A screen in Supabase or Vercel looks different from this guide | These sites update their menus often. Look for the same words nearby, or send Claude a screenshot. |
 
 ---
